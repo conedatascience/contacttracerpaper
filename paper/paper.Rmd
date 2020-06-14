@@ -6,6 +6,8 @@ date: "6/14/2020"
 output: 
   bookdown::pdf_document2
 bibliography: bibliography.bib
+abstract: |
+  Contact tracing is a well-known tool for public health professions to trace and isolate contacts of known infectious persons. During a pandemic contact tracing is critical to ending an outbreak, but the volume of cases makes tracing difficult without adequate staffing tools. Hospitals equiped with electronic medical records, can utilise these databases to automatically link cases into possible tranmission chains and surface potential new outbreaks. While this automatic contact tracing does not have the richness of contact tracing interviews, it does provide a way for health systems to highlight potential super-spreader events and support their local health departments. Additionally, these data provide insight into how a given infection is spreading locally. These insights can be used to inform policy at the local level.
 ---
 
 ```{r setup, include=FALSE}
@@ -44,14 +46,20 @@ It is known that certain immigrant communities settled in well defined areas of 
 Because of the close-knit nature of these communities and the relative small number of speakers of these languages, these languages were also used to examine for potential outbreaks.
 
 In order to establish possible linked cases, the positive patients were grouped on each of the three main criteria, location, employer, and language. 
-For those persons that shared a uniqu location, a "cluster" was formed.
+For those persons that shared a unique location, a "cluster" was formed.
 The patient that recorded the first positive case was declared the index case for the cluster, and the difference from the index case was calculated for each cluster.
 This process was repeated for employers and languages.
-If the time between cases was greater than a threshold (e.g. 30 days), then the index case was relcaluted iteratively for a given cluster (i.e. one household might have more than one index case).
+If the time between cases was greater than a threshold (e.g. 30 days), then the index case was recalculated iteratively for a given cluster (i.e. one household might have more than one index case).
 
-The derrived cluster information was combined from the three different sources and paired with other demographic information like age, race, and gender.
-This data was then combined into a linelist, or list of all positive cases, and a contact list.
+The derived cluster information was combined from the three different sources and paired with other demographic information like age, race, and gender.
+If an individual appeared in more than one contact network, the earliest known transmission chain was retained.
+This data was then combined into a line list, or list of all positive cases, and a contact list that contained the above information regarding who likely was the index case for each infection.
+All data cleaning and aggregation took place in the R Statistical Environment [@baser].
+The Epicontacts package [@epicontactspkg] was utilised in order to visualise the tranmission chains under a variety of different views.
 
 # Results
 
 # Discussion
+
+# References
+
