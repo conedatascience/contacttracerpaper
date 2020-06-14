@@ -1,0 +1,57 @@
+---
+title: "Automatic Contact Tracing for Outbreak Detection Using Hospital EMR Data"
+author: 
+  - Michael DeWitt^[Cone Health, michael.dewitt@conehealth.com]
+date: "6/14/2020"
+output: 
+  bookdown::pdf_document2
+bibliography: bibliography.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+# Introduction
+
+Contact tracing is an effective way to trace the origin of cases and is a well known tool for public health.
+However, contact tracing typically relies on small staffs of local public health offices.
+During the SARS-CoV-2 outbreak, these public health offices were and continue to be saturated with cases.
+With each positive case making approximately 5-10 contacts per day and a serial interval of 4 days (2-14 days), this means that for each positive case, somewhere between 20-40 unique contacts need to be tracked per new case, assuming that cases are detected at the first sign of symptoms.
+In the middle of an outbreak the workload is daunting.
+Effective contact tracing is a part of the CDC's guide to relaxing restrictions on social distancing.
+
+Additionally, analysis of SARS-CoV-2 has shown that the virus typically spreads in so call super-spreader events. 
+This means that one index may generate many secondary cases, while the majority of cases
+However, contact tracing is limited by several factors including staffing to 
+
+# Methods
+
+Data from the Electronic Medical Record is processed into a local enterprise data warehouse (EDW). 
+For SARS-CoV-2 the critical data collected were positive test results.
+These positive tests were recorded both for on-site rapid tests and external laboratory results.
+These positive test results were then paired with general patient information collected about the patients within the EMR as part of the normal intake process. 
+These data include the patient's reported address, their primary spoken language, and employer.
+Employment history was also supplemented with insurance information (e.g. plan numbers) if the patient had commercial insurance.
+
+The addresses on file for those patients were then geocoded using an on-premises secure software.
+Prior to geocoding the addresses, a program was run to clean the addresses in order to make the probability of a matching address being found higher (e.g. consistent abbreviations for streets, removal of apartment numbers).
+These geocoded addresses were then truncated to four decimal places in order to represent a 30 foot radius around the reported address. 
+A similar approach was used for employment information with self-reported employment information being cleaned for consistency as well as compared against a list of locally developed employer alias (e.g. Proctor & Gamble = Proctor And Gamble, etc) in order to account for inconsistencies in naming.
+
+Using understanding of local demography, a select group of languages were generated.
+It is known that certain immigrant communities settled in well defined areas of the service region.
+Because of the close-knit nature of these communities and the relative small number of speakers of these languages, these languages were also used to examine for potential outbreaks.
+
+In order to establish possible linked cases, the positive patients were grouped on each of the three main criteria, location, employer, and language. 
+For those persons that shared a uniqu location, a "cluster" was formed.
+The patient that recorded the first positive case was declared the index case for the cluster, and the difference from the index case was calculated for each cluster.
+This process was repeated for employers and languages.
+If the time between cases was greater than a threshold (e.g. 30 days), then the index case was relcaluted iteratively for a given cluster (i.e. one household might have more than one index case).
+
+The derrived cluster information was combined from the three different sources and paired with other demographic information like age, race, and gender.
+This data was then combined into a linelist, or list of all positive cases, and a contact list.
+
+# Results
+
+# Discussion
