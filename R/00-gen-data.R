@@ -6,15 +6,17 @@
 library(wakefield)
 library(tidyverse)
 
+# setup -------------------------------------------------------------------
+set.seed(336)
+
 # generate fake data ------------------------------------------------------
 # Using Wakefield, generate fake patient population
 df <- r_data_frame(
-	n = 500,
+	n = 5500,
 	x = rnorm,
 	y = rnorm,
 	race,
 	id,
-	race,
 	age,
 	sex,
 	language,
@@ -23,4 +25,7 @@ df <- r_data_frame(
 
 # clean data --------------------------------------------------------------
 # 
-
+df_2 <- df %>% 
+	mutate(location = paste0(round(x,2),"-",round(y,2))) %>% 
+	count(location, sort = T)
+				 

@@ -18,9 +18,12 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 # Introduction
 
 Contact tracing is an effective way to trace the origin of cases and is a well known tool for public health.
+Through contact tracing, infected indiviuals are isolated and a history of who an infected individual had close contact with is established.
+Individuals with close contact are then interviewed for symptoms and isolated themselves in order to arrest additional transmission of an infection.
+Effective use of contact tracing can drastically reduce the duration of infection [@eames_contact_2003].
 However, contact tracing typically relies on small staffs of local public health offices.
 During the SARS-CoV-2 outbreak, these public health offices were and continue to be saturated with cases.
-With each positive case making approximately 5-10 contacts per day and a serial interval of 4 days (2-14 days), this means that for each positive case, somewhere between 20-40 unique contacts need to be tracked per new case, assuming that cases are detected at the first sign of symptoms.
+With each non-isolated positive case roughly 10 [@jarvis_quantifying_2020] contacts per day^[Also of note is @mossong_social_2008 where depending on the country and age band, the number of contacts per day could be between 9-18 contacts per day] and a serial interval of 4-5 days [@nishiura_serial_2020; @bi_epidemiology_2020], this means that for each positive case, somewhere between 20-40 unique contacts need to be tracked per new case, assuming that cases are detected at the first sign of symptoms.
 In the middle of an outbreak the workload is daunting.
 Effective contact tracing is a part of the United States Center for Disease Control's (CDC) guide [@centers_for_disease_control_and_prevention_cdc_2020] to relaxing restrictions on social distancing.
 
