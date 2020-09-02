@@ -111,6 +111,5 @@ This would provide a much higher degree of certainty regarding likely transmissi
 Automatic contact tracing and cluster identification using the EMR provides a methodology to probabilistically identify transmission chains and likely emerging clusters of cases.
 During a pandemic when the burden of contact tracing falls on local departments, use of such tools could help them focus their limited time and resources on emerging outbreaks.
 
-
 # References
 

@@ -1,0 +1,16 @@
+---
+title: "Appendix: Automatic Contact Tracing for Outbreak Detection Using Hospital Electronic Medical Record Data"
+author: 
+  - Michael DeWitt^[Cone Health, michael.dewitt@conehealth.com]
+date: "6/14/2020"
+toc: false
+output: 
+  bookdown::pdf_document2
+bibliography: [bibliography.bib, bibsources.bib]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Intro
