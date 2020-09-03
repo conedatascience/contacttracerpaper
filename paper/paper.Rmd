@@ -2,7 +2,7 @@
 title: "Automatic Contact Tracing for Outbreak Detection Using Hospital Electronic Medical Record Data"
 author: 
   - Michael DeWitt^[Cone Health, michael.dewitt@conehealth.com]
-date: "6/14/2020"
+date: "6/14/2020 *(Updated 9/3/2020)*"
 toc: false
 output: 
   bookdown::pdf_document2
@@ -44,6 +44,7 @@ This means that one index case may generate many secondary cases, while the majo
 Stopping these super-spreader events is important to ending an epidemic and the spread of infection in a community.
 Studies have shown that if contact tracing can be used to test, trace, and isolate certain high risk communities stopping the spread of infection can be made more effective [@eames_contact_2007].
 However, contact tracing is limited by several factors including staffing.
+Providing rapid identification of super-spreading events and the associated clusters can ameliorate lack of staffing by focusing resources on known linked cases.
 
 # Methods
 
@@ -79,6 +80,8 @@ If an individual appeared in more than one contact network, the earliest known t
 This data was then combined into a line list, or list of all positive cases, and a contact list that contained the above information regarding who likely was the index case for each infection.
 All data cleaning and aggregation took place in the R Statistical Environment [@baser].
 The Epicontacts package [@epicontactspkg] was utilized in order to visualize the transmission chains under a variety of different views.
+
+Please see the appendix for implementation details.
 
 # Results
 

@@ -7,10 +7,112 @@ toc: false
 output: 
   bookdown::pdf_document2
 bibliography: [bibliography.bib, bibsources.bib]
+nocite: |
+  @tidyr, @dplyr
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-# Intro
+# Introduction
+
+The methods described in the paper can be demonstrated through a simulation study with synthetic data that mimics the type of data available in the Electronic Medical Record.
+Implementation of the methods described in the paper have been placed in an R package called [autotracer]() and can be downloaded as follows: 
+
+```r
+remotes::install_github("conedatascience/autotracer")
+```
+
+# Data
+
+The autotracer package as a synthetic data set generated using the Wakefield R package [@wakefield].
+These data represent typical data that could be retrieved from an EMR at the patient level and supplemented by geocoding the patient address information.
+
+* Latitude/ Longitude (x,y) coordinates for the patient's home address 
+* Patient Identifier (could be a patient Medical Record Number or some other unique identifier)
+* Race 
+* Age (both whole years and binned in 10 year intervals)
+* Sex 
+* Primary Language 
+* Test Date/ Symptom Onset Date (depending on information availability)  
+
+These data can be view as follows:
+
+```{r}
+library(autotracer)
+library(dplyr)
+library(tidyr)
+
+head(autotracer::autotracer_linelist)
+```
+
+# Implementation
+
+The synthetic EMR data set can then be cleaned in order to establish the probabilistic transmission chain within the cluster.
+
+For illustrative purposes the latitude and longitude coordinates are trimmed to some level of precision.
+This trimming is governed by local conditions based on the estimated contacts patterns in the community of interest.
+Typically, a good starting point is to round the geographic coordinates to four decimal places which represents a 30 foot radius to represent a "household".^[There are drawbacks to this method as people living in multifamily homes or apartment buildings could be combined into a cluster where there may not be any real interactions between these persons. In this case it is important to understand transmission pathways and to balance the false positive rate for cluster identification versus returning fewer, but more exact clusters.]
+For expediency, here rounding to two decimal places is used.
+These new coordinates are then combined to a single "location" parameter and used as a grouping variable representing a cluster candidate.
+Note that those locations with only one case are removed from the cluster candidate pool.
+
+```{r}
+contact_matrix <- autotracer_linelist %>%
+	mutate(location = paste0(round(x,2),"-",round(y,2))) %>% 
+	group_by(location) %>%
+	mutate(ct = n()) %>%
+	dplyr::filter(ct>1) %>%
+	arrange(-ct) %>% 
+	dplyr::select(-ct)
+
+```
+
+The cluster candidates can then be submitted to the `connect_probable_cases` function which in turn internally calls functions from the outbreaker2 [@outbreaker2] package.
+The `connect_probable_cases` also has arguments that allow the user to specify the probability distribution for the relevant distribution (e.g. serial interval as shown below, but generation interval could also be used), a cluster link identifier, and a threshold for removing a patient from the transmission chain.
+The threshold argument is used to remove patients from a cluster based on if the time between the transmission is larger than one would expected (e.g. it is unlikely that someone transmitted a respiratory infection after 60 days). 
+Again, subject matter expertise and local conditions should be used to determine this threshold because it could also be affected by testing delays.
+
+Continuing with the above example the transmission chains can be estimated using the following code applied to the first ten candidate for expediency:
+
+
+```{r eval=FALSE}
+contact_matrix <- contact_matrix %>% 
+	nest() %>%
+	.[1:10,] %>% 
+	mutate(connections = purrr::map(data, connect_probable_cases, 
+													 exposure_link = location,
+													 threshold = 30)) %>%
+	dplyr::select(connections) %>%
+	unnest(connections) %>% 
+	ungroup() %>% 
+	dplyr::select(from, to, diff_dt_onset, exposure_link)
+	
+```
+
+
+After the contact matrix is established, the epicontacts package [@epicontacts], a part of the [R Epidemics Consortium](https://www.repidemicsconsortium.org/) suite of packages can be used for further analysis and visualization of clusters.
+
+
+```{r eval=FALSE}
+library(epicontacts)
+x <- make_epicontacts(linelist = autotracer_linelist,
+											from = "from", to = "to",
+											id = "patient_id",
+											directed = TRUE,
+											contacts = contact_matrix)
+```
+
+
+
+```{r echo=FALSE, fig.cap="Example Network Graphic Generated Using epicontacts", out.width="500px"}
+knitr::include_graphics(here::here("output", "network.png"))
+```
+
+
+Automatic cluster emergence can be accomplished by running this program each day and writing out the cluster identifiers and associated members.
+Each day the cluster sizes and associated members can be done in order to identify which clusters are growing.^[Another method would be to run this algorithm iteratively, sub-setting the data on date (e.g. run the algorithm for all cases less than date $n_t$, then repeat for date $n_{t+1}$, and so on. Emerging clusters could then be identified in memory; however, running this algorithm in such a way would likely be computationally costly.)]
+Additionally, the tools provided by the epicontacts package allow for secondary analysis such as establishing contact patterns and estimated the over-dispersion of the transmission chains.
+
+# References
